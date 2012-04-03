@@ -36,6 +36,19 @@ module Rubymine2Xcode
         instance.colours << { :name => name, :value => value }
       end
 
+
+      # read attributes
+      root.elements.each("attributes/option") do |element|
+        name = element.attributes["name"]
+        attr = {}
+        element.elements.each("value/option") do |value_element|
+          value_name = value_element.attributes["name"]
+          value_value = value_element.attributes["value"]
+          attr[value_name] = value_value
+        end
+        instance.attributes[name] = attr
+      end
+
       instance
     end
 

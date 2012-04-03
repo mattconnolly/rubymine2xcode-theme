@@ -5,8 +5,7 @@ COBALT_TEST_FILE = File.expand_path("files/cobalt2.xml", File.dirname(__FILE__))
 describe "Parsing Rubymine XML file" do
 
 
-  before :each do
-
+  before :all do
     @r2x = Rubymine2Xcode::RubymineTheme.load_file COBALT_TEST_FILE
   end
 
@@ -22,6 +21,18 @@ describe "Parsing Rubymine XML file" do
 
   it "can access colours by name" do
     @r2x.colour_named("CARET_ROW_COLOR").should == "1629"
+  end
+
+  it "builds an Hash of attributes" do
+    @r2x.attributes.should be_a(Hash)
+    @r2x.attributes.should_not be_empty
+  end
+
+  it "each attribute hash has a hash of values" do
+    @r2x.attributes.each_pair do |name, values|
+      values.should be_a(Hash)
+      values.should_not be_empty
+    end
   end
 
 end
