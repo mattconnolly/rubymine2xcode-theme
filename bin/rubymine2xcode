@@ -73,7 +73,7 @@ begin
   output_name = File.basename(ARGV[0])
   output_name.gsub! /#{Regexp.escape(ext)}$/, '.dvtcolortheme'
   output_path = File.join(File.expand_path(OUTPUT_DIRECTORY), output_name)
-  puts "generating xcode theme: #{output_path}"
+  puts "Generating xcode theme: #{output_path}"
 
   if File.exist?(output_path)
     if $overwrite
