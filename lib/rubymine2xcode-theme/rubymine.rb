@@ -9,6 +9,7 @@ module Rubymine2Xcode
 
     attr_accessor :colours
     attr_accessor :attributes
+    attr_accessor :font_name, :font_size
 
     def initialize()
       @colours = []
@@ -49,7 +50,27 @@ module Rubymine2Xcode
         instance.attributes[name] = attr
       end
 
+
+      # read font name and size
+      instance.font_name = XPath.first(xmldoc, '/scheme/option[@name="EDITOR_FONT_NAME"]').attribute("value").value
+      instance.font_size = XPath.first(xmldoc, '/scheme/option[@name="EDITOR_FONT_SIZE"]').attribute("value").value.to_i
+
       instance
+    end
+
+
+  end
+
+
+  module ColourConversion
+
+    def rubymine_colour_to_a string
+      # rubymine colours have leading zeros stripped
+      string = "0" * (6 - string.length) + string if string.length < 6
+      red = string[0..1]
+      green = string[2..3]
+      blue = string[4..5]
+      [red.to_i(16)/255.0, green.to_i(16)/255.0, blue.to_i(16)/255.0]
     end
 
   end

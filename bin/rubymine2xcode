@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+#
+# rubymine2xcode
+#
+# This program converts a rubymine colour theme into an xcode theme
+#
+
+puts "ruby is: #{RUBY_VERSION}"
+
+require 'optparse'
+
+# ensure our lib dir is in the load path
+$:.unshift File.expand_path('../lib', File.dirname(__FILE__))
+
+require 'rubymine2xcode-theme/version'
+require 'rubymine2xcode-theme'
+require 'fileutils'
+
+include Rubymine2Xcode
+
+OUTPUT_DIRECTORY = "~/Library/Developer/Xcode/UserData/FontAndColorThemes"
+$overwrite = false
+
+
+optparse = OptionParser.new do |opts|
+  opts.banner = <<END
+Usage: rubymine2xcode <rubymine-theme.xml>
+       Convert the Ruby mine theme file <rubymine-theme.xml> into the Xcode theme file.
+       An Xcode theme file of the same base name will be created in ~/Library/... where
+       Xcode will look for it.
+
+END
+
+  opts.on('-f', '--force', "force overwrite an existing output file") do
+    $overwrite = true
+  end
+
+    opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit(0)
+  end
+
+end
+
+
+output_path = ''
+
+begin
+  optparse.parse!
+
+  # check arguments
+  if ARGV.length != 1
+    raise "Expects 1 argument"
+  end
+
+  unless File.exist?(ARGV[0])
+    raise "Input file '#{ARGV[0]}' does not exist"
+  end
+
+
+  # read input file
+  puts "Loading rubymine theme..."
+  rubymine = RubymineTheme.load_file ARGV[0]
+
+
+  # checkout output
+  FileUtils.mkpath File.expand_path(OUTPUT_DIRECTORY)
+
+
+
+  # get output filename
+  ext = File.extname(ARGV[0])
+  output_name = File.basename(ARGV[0])
+  output_name.gsub! /#{Regexp.escape(ext)}$/, '.dvtcolortheme'
+  output_path = File.join(File.expand_path(OUTPUT_DIRECTORY), output_name)
+  puts "generating xcode theme: #{output_path}"
+
+  if File.exist?(output_path)
+    if $overwrite
+      File.delete output_path
+    else
+      raise "Output file '#{output_path}' already exists. Run with -f to overwrite."
+    end
+  end
+
+
+  converter = Converter.new
+  converter.convert rubymine, output_path
+
+rescue SystemExit
+  # let it go through, we've been told to exit
+  raise
+rescue Exception => x
+  $stderr.puts optparse
+  $stderr.puts x
+  exit(1)
+end
+
+

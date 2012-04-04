@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {spec,spec,features}/*`.split("\n")
   gem.name          = "rubymine2xcode-theme"
   gem.require_paths = ["lib"]
-  gem.version       = Rubymine2Xcode::Theme::VERSION
+  gem.version       = Rubymine2Xcode::VERSION
 
   gem.add_dependency 'plist'
 

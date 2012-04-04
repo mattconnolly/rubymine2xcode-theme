@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-COBALT_TEST_FILE = File.expand_path("files/cobalt2.xml", File.dirname(__FILE__))
 
 describe "Parsing Rubymine XML file" do
 
@@ -32,6 +31,17 @@ describe "Parsing Rubymine XML file" do
     @r2x.attributes.each_pair do |name, values|
       values.should be_a(Hash)
       values.should_not be_empty
+    end
+  end
+
+  it "gets the font name and size" do
+    @r2x.font_name.should == "Monaco"
+    @r2x.font_size.should == 12
+  end
+
+  it "print a list of attribute names" do
+    @r2x.attributes.each do |attr|
+      attr[0].should_not be_nil
     end
   end
 
